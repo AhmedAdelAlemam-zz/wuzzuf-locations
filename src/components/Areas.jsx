@@ -1,5 +1,4 @@
 import React from "react";
-import { Component } from "react";
 import { FormGroup } from "react-bootstrap";
 const  Areas =(props)=> {
     const areasData = props.areas;

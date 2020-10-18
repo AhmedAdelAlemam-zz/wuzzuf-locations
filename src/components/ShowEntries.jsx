@@ -1,7 +1,6 @@
 import React from "react";
 
 const ShowEntries = (props) => {
-  
   const {
     selectedCity,
     selectedCountry,
