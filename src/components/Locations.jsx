@@ -100,7 +100,10 @@ class Locations extends Component {
   getCityDataOnSelect(e) {
     const index = e.nativeEvent.target.selectedIndex;
     const selectedCity = e.nativeEvent.target[index].text;
-    this.setState({ selectedCity: selectedCity });
+    this.setState({
+      selectedCity: selectedCity,
+      selectedArea: "",
+    });
 
     const countryId = this.state.currentCountryId;
     this.getAreas(countryId, e.target.value); //second parameter here is for city id
