@@ -144,6 +144,7 @@ class Locations extends Component {
                 {currentCountryId === "56" && isCitySelected ? (
                   <Areas
                     areas={areas}
+                    selectedArea={selectedArea}
                     getAreaDataOnSelect={this.getAreaDataOnSelect}
                   />
                 ) : null}
