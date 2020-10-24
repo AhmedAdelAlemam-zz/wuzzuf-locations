@@ -3,7 +3,9 @@ import { Col, Container, Row } from "react-bootstrap";
 import Areas from "./Areas";
 import Cities from "./Cities";
 import Countries from "./Countries";
+import DarkMode from "../shared/DarkMode";
 import ShowEntries from "./ShowEntries";
+import Axios from "axios";
 
 class Locations extends Component {
   constructor(props) {
@@ -22,26 +24,21 @@ class Locations extends Component {
   }
   componentDidMount() {
     const countriesUrl = `${this.state.baseUrl}/countries`;
-    fetch(countriesUrl, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        const countries = data.data;
-        countries.map((country) => {
-          //setting countries
-          return this.setState({
-            countries: this.state.countries.concat(country),
-          });
+    const fetchCountriesData = async () => {
+      const result = await Axios.get(countriesUrl);
+      const countries = result.data.data;
+      countries.map((country) => {
+        //setting countries
+        this.setState({
+          countries: this.state.countries.concat(country),
         });
       });
+    };
+    fetchCountriesData();
+
     this.getCountryDataOnSelect = this.getCountryDataOnSelect.bind(this);
     this.getCityDataOnSelect = this.getCityDataOnSelect.bind(this);
     this.getAreaDataOnSelect = this.getAreaDataOnSelect.bind(this);
-    this.toggleDarkMode = this.toggleDarkMode.bind(this);
   }
 
   getCountryDataOnSelect(e) {
@@ -54,23 +51,19 @@ class Locations extends Component {
       selectedCountry: selectedCountry,
     });
     this.getCities(e.target.value);
+    document.getElementById("defaultCountriesOption").classList.add("d-none");
   }
 
   getCities(id) {
     const citiesUrl = `${this.state.baseUrl}/country/${id}/city`;
-    fetch(citiesUrl, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        const cities = data.data;
-        cities.map((city) => {
-          this.setState({ cities: this.state.cities.concat(city) });
-        });
+    const fetchCitiesData = async () => {
+      const result = await Axios.get(citiesUrl);
+      const cities = result.data.data;
+      cities.map((city) => {
+        this.setState({ cities: this.state.cities.concat(city) });
       });
+    };
+    fetchCitiesData();
     //resetting cities and selected city on new country select
     this.setState({ cities: [], selectedCity: "" });
   }
@@ -79,19 +72,14 @@ class Locations extends Component {
     const areasUrl = `${this.state.baseUrl}/country/${countryId}/city/${cityId}/area`;
     //blocking the request if country not Egypt
     if (countryId === "56") {
-      fetch(areasUrl, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          const areas = data.data;
-          areas.map((area) => {
-            this.setState({ areas: this.state.areas.concat(area) });
-          });
+      const fetchAreasData = async () => {
+        const result = await Axios.get(areasUrl);
+        const areas = result.data.data;
+        areas.map((area) => {
+          this.setState({ areas: this.state.areas.concat(area) });
         });
+      };
+      fetchAreasData();
     }
     //resetting areas on new city select
     this.setState({ areas: [] });
@@ -106,22 +94,16 @@ class Locations extends Component {
     });
 
     const countryId = this.state.currentCountryId;
-    this.getAreas(countryId, e.target.value); //second parameter here is for city id
-  }
-
-  toggleDarkMode() {
-    const body = document.body;
-    const container = document.getElementById("container");
-    const toggler = document.getElementById("toggler");
-    body.classList.toggle("dark-mode");
-    container.classList.toggle("text-white");
-    toggler.classList.toggle("transform");
+    const cityId = e.target.value;
+    this.getAreas(countryId, cityId);
+    document.getElementById("defaultCitiesOption").classList.add("d-none");
   }
 
   getAreaDataOnSelect(e) {
     const index = e.nativeEvent.target.selectedIndex;
     const selectedArea = e.nativeEvent.target[index].text;
     this.setState({ selectedArea: selectedArea });
+    document.getElementById("defaultAreasOption").classList.add("d-none");
   }
 
   render() {
@@ -175,19 +157,7 @@ class Locations extends Component {
             </Row>
           </Col>
           <Col md="2" />
-          <Col md="2">
-            <Row className="pointer" onClick={this.toggleDarkMode}>
-              <Col md="2">
-                <i className="fa fa-sun-o"></i>
-              </Col>
-              <Col md="1">
-                <span className="slider round pointer" id="toggler"></span>
-              </Col>
-              <Col md="2">
-                <i className="fa fa-moon-o"></i>
-              </Col>
-            </Row>
-          </Col>
+          <DarkMode />
         </Row>
       </Container>
     );

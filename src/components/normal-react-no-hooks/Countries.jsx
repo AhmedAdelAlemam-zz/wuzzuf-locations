@@ -11,7 +11,7 @@ const Countries = (props) => {
           className="form-control countries"
           onChange={props.getCountryDataOnSelect}
         >
-          <option>Select Country</option>
+          <option id="defaultCountriesOption">Select Country</option>
           {countriesData.map((country) => {
             return (
               <option key={country.id} value={country.id}>

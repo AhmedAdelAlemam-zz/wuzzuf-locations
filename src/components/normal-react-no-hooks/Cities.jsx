@@ -12,7 +12,7 @@ const Cities = (props) => {
           onChange={props.getCityDataOnSelect}
           disabled={citiesData.length === 0}
         >
-          <option>Select City</option>
+          <option id="defaultCitiesOption">Select City</option>
           {citiesData.length !== 0
             ? citiesData.map((city) => {
                 return (
